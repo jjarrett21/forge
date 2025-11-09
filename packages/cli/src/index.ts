@@ -5,9 +5,130 @@ import {
   createFrontendProject,
   createBackendProject,
   createFullStackProject,
+  createProject,
+  interpretNaturalLanguage,
 } from "@forge/core";
 
 async function main() {
+  // Check for --from-prompt flag
+  const args = process.argv.slice(2);
+  const fromPrompt = args.includes("--from-prompt");
+
+  if (fromPrompt) {
+    await handleNaturalLanguageFlow();
+    return;
+  }
+
+  await handleInteractiveFlow();
+}
+
+async function handleNaturalLanguageFlow() {
+  console.log(); // Add spacing
+
+  p.intro("🔥 Forge - Natural Language Project Scaffolder");
+
+  // Collect multiline text input
+  const description = await p.text({
+    message: "Describe the project you want to build:",
+    placeholder:
+      "I want a web app with React UI, FastAPI backend, and Postgres. Use Docker.",
+    validate: (value) => {
+      if (!value || value.trim().length === 0) {
+        return "Project description is required";
+      }
+      return;
+    },
+  });
+
+  if (p.isCancel(description)) {
+    p.cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  // Interpret natural language
+  const spinner = p.spinner();
+  spinner.start("Interpreting your project description...");
+
+  let config;
+  try {
+    config = await interpretNaturalLanguage(description as string);
+    spinner.stop("✅ Project configuration interpreted!");
+  } catch (error) {
+    spinner.stop("❌ Failed to interpret project description");
+    p.cancel(error instanceof Error ? error.message : "Unknown error occurred");
+    process.exit(1);
+  }
+
+  // Show interpreted config
+  p.note(
+    `Project: ${config.projectName}\nFrontend: ${config.frontend}\nBackend: ${config.backend}\nDatabase: ${config.database}\nDocker: ${config.useDocker}`,
+    "Configuration"
+  );
+
+  // Confirm before creating
+  const confirm = await p.confirm({
+    message: "Proceed with creating this project?",
+    initialValue: true,
+  });
+
+  if (p.isCancel(confirm) || !confirm) {
+    p.cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  // Create the project
+  const createSpinner = p.spinner();
+  createSpinner.start("Creating your project...");
+
+  try {
+    await createProject(config);
+    createSpinner.stop("✅ Project created successfully!");
+
+    const nextSteps = getNextSteps(config);
+    p.note(nextSteps, "Ready to code!");
+
+    p.outro("🎉 Your project is ready!");
+  } catch (error) {
+    createSpinner.stop("❌ Failed to create project");
+    p.cancel(error instanceof Error ? error.message : "Unknown error occurred");
+    process.exit(1);
+  }
+}
+
+function getNextSteps(config: {
+  projectName: string;
+  frontend: string;
+  backend: string;
+  useDocker: boolean;
+}): string {
+  const { projectName, frontend, backend, useDocker } = config;
+  let steps = `cd ${projectName}\n`;
+
+  if (useDocker && backend !== "none") {
+    steps += "docker-compose up --build\n\n";
+    if (frontend !== "none") {
+      steps += "Frontend: http://localhost:3000\n";
+    }
+    steps += "Backend: http://localhost:8000\n";
+    steps += "API Docs: http://localhost:8000/docs";
+  } else {
+    if (frontend !== "none") {
+      steps += `cd ${
+        frontend !== "none" && backend !== "none" ? "frontend" : ""
+      }\n`;
+      steps += "npm run dev";
+    }
+    if (backend !== "none") {
+      if (frontend !== "none") steps += "\n\n";
+      steps += `cd ${frontend !== "none" ? "../backend" : "backend"}\n`;
+      steps += "uvicorn app.main:app --reload";
+    }
+  }
+
+  return steps;
+}
+
+async function handleInteractiveFlow() {
   console.log(); // Add spacing
 
   p.intro("🔥 Forge - Full-Stack Project Scaffolder");
