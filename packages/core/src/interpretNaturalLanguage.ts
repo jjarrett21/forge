@@ -12,7 +12,7 @@ export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
 
 // Default to production proxy, allow override with env var
 const PROXY_URL =
-  process.env.FORGE_PROXY_URL || "https://forge-proxy.YOUR_SUBDOMAIN.workers.dev";
+  process.env.FORGE_PROXY_URL || "https://forge-proxy.jjarrett21.workers.dev";
 
 /**
  * Interprets natural language project description and converts it to structured config
@@ -82,6 +82,8 @@ export async function interpretNaturalLanguage(
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("Unknown error occurred while interpreting project description");
+    throw new Error(
+      "Unknown error occurred while interpreting project description"
+    );
   }
 }
