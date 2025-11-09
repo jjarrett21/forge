@@ -6,6 +6,10 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "execa": "^9.6.0",
+    "fs-extra": "^11.3.2"
   }
 }
 

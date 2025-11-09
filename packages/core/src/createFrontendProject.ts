@@ -1,5 +1,6 @@
-import { spawn } from "child_process";
+import { execa } from "execa";
 import path from "path";
+import fs from "fs-extra";
 
 /**
  * Creates a frontend project using react-vite-kitchen-sink template
@@ -10,56 +11,55 @@ export async function createFrontendProject(
   projectName: string,
   cwd: string = process.cwd()
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
-    // Step 1: Create project using npm create
-    console.log(`Creating project "${projectName}" with react-vite-kitchen-sink...`);
-    
-    const createProcess = spawn(
-      "npm",
-      ["create", "react-vite-kitchen-sink@latest", projectName],
-      {
-        cwd,
-        stdio: "inherit",
-        shell: true,
-      }
-    );
+  // The package creates a directory, so we'll use a temp name first
+  const tempName = `${projectName}-temp-${Date.now()}`;
+  const tempPath = path.join(cwd, tempName);
+  const targetPath = path.join(cwd, projectName);
 
-    createProcess.on("error", (error) => {
-      reject(new Error(`Failed to create project: ${error.message}`));
+  try {
+    // Step 1: Create project using npx react-vite-kitchen-sink
+    console.log(`Creating project "${projectName}" with react-vite-kitchen-sink...`);
+
+    // Call react-vite-kitchen-sink with inputs
+    // First prompt: project name, Second prompt: additional packages (empty)
+    await execa("npx", ["-y", "react-vite-kitchen-sink"], {
+      input: `${tempName}\n\n`,
+      stdio: ["pipe", "inherit", "inherit"],
+      cwd,
     });
 
-    createProcess.on("close", async (code) => {
-      if (code !== 0) {
-        reject(new Error(`Project creation failed with exit code ${code}`));
-        return;
+    // Move the generated directory to our target
+    if (await fs.pathExists(tempPath)) {
+      // Remove target if it exists
+      if (await fs.pathExists(targetPath)) {
+        await fs.remove(targetPath);
       }
+      await fs.move(tempPath, targetPath);
+    } else {
+      throw new Error(`Failed to create project at ${tempPath}`);
+    }
 
-      // Step 2: Install dependencies
-      const projectPath = path.join(cwd, projectName);
+    // Step 2: Install dependencies (if not already installed by the package)
+    const projectPath = path.join(cwd, projectName);
+    const packageJsonPath = path.join(projectPath, "package.json");
+
+    if (await fs.pathExists(packageJsonPath)) {
       console.log(`\nInstalling dependencies in "${projectName}"...`);
-
-      const installProcess = spawn("npm", ["install"], {
+      await execa("npm", ["install"], {
         cwd: projectPath,
         stdio: "inherit",
-        shell: true,
       });
+    }
 
-      installProcess.on("error", (error) => {
-        reject(new Error(`Failed to install dependencies: ${error.message}`));
+    console.log(`\n✅ Project "${projectName}" created successfully!`);
+  } catch (error) {
+    // Clean up temp directory on error
+    if (await fs.pathExists(tempPath)) {
+      await fs.remove(tempPath).catch(() => {
+        // Ignore cleanup errors
       });
-
-      installProcess.on("close", (installCode) => {
-        if (installCode !== 0) {
-          reject(
-            new Error(`Dependency installation failed with exit code ${installCode}`)
-          );
-          return;
-        }
-
-        console.log(`\n✅ Project "${projectName}" created successfully!`);
-        resolve();
-      });
-    });
-  });
+    }
+    throw error;
+  }
 }
 

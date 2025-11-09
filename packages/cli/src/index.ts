@@ -1,7 +1,11 @@
 #!/usr/bin/env node
 
 import * as p from "@clack/prompts";
-import { createFrontendProject } from "@forge/core";
+import {
+  createFrontendProject,
+  createBackendProject,
+  createFullStackProject,
+} from "@forge/core";
 
 async function main() {
   console.log(); // Add spacing
@@ -38,9 +42,16 @@ async function main() {
         label: "Frontend",
         hint: "React + Vite + Tailwind + React Query",
       },
-      // Future: Add more options
-      // { value: "backend", label: "Backend", hint: "FastAPI" },
-      // { value: "fullstack", label: "Full-Stack", hint: "Frontend + Backend" },
+      {
+        value: "backend",
+        label: "Backend",
+        hint: "FastAPI + PostgreSQL + Docker",
+      },
+      {
+        value: "fullstack",
+        label: "Full Stack",
+        hint: "Frontend + Backend (FastAPI + PostgreSQL)",
+      },
     ],
   });
 
@@ -49,10 +60,11 @@ async function main() {
     process.exit(0);
   }
 
-  // Confirm using kitchen sink starter (for frontend)
+  // Handle frontend project
   if (projectType === "frontend") {
     const useKitchenSink = await p.confirm({
-      message: "Use the Kitchen Sink starter? (React + Vite + Tailwind + React Query)",
+      message:
+        "Use the Kitchen Sink starter? (React + Vite + Tailwind + React Query)",
       initialValue: true,
     });
 
@@ -62,7 +74,9 @@ async function main() {
     }
 
     if (!useKitchenSink) {
-      p.cancel("Kitchen Sink starter is currently the only option for frontend projects.");
+      p.cancel(
+        "Kitchen Sink starter is currently the only option for frontend projects."
+      );
       process.exit(0);
     }
 
@@ -82,7 +96,57 @@ async function main() {
       p.outro("🎉 Your project is ready!");
     } catch (error) {
       spinner.stop("❌ Failed to create project");
-      p.cancel(error instanceof Error ? error.message : "Unknown error occurred");
+      p.cancel(
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+      process.exit(1);
+    }
+  }
+  // Handle backend project
+  else if (projectType === "backend") {
+    const spinner = p.spinner();
+    spinner.start("Creating your backend project...");
+
+    try {
+      await createBackendProject(projectName as string);
+      spinner.stop("✅ Backend project created successfully!");
+
+      p.note(
+        `Next steps:\n  cd ${projectName}\n  docker-compose up --build\n\n  API: http://localhost:8000\n  API Docs: http://localhost:8000/docs`,
+        "Ready to code!"
+      );
+
+      p.outro("🎉 Your backend project is ready!");
+    } catch (error) {
+      spinner.stop("❌ Failed to create project");
+      p.cancel(
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
+      process.exit(1);
+    }
+  }
+  // Handle full stack project
+  else if (projectType === "fullstack") {
+    const spinner = p.spinner();
+    spinner.start("Creating your full-stack project...");
+
+    try {
+      // Step 1: Create frontend
+      spinner.message("Creating frontend...");
+      await createFullStackProject(projectName as string);
+      spinner.stop("✅ Full-stack project created successfully!");
+
+      p.note(
+        `Next steps:\n  cd ${projectName}\n  docker-compose up --build\n\n  Frontend: http://localhost:3000\n  Backend: http://localhost:8000\n  API Docs: http://localhost:8000/docs`,
+        "Ready to code!"
+      );
+
+      p.outro("🎉 Your full-stack project is ready!");
+    } catch (error) {
+      spinner.stop("❌ Failed to create project");
+      p.cancel(
+        error instanceof Error ? error.message : "Unknown error occurred"
+      );
       process.exit(1);
     }
   } else {
@@ -95,4 +159,3 @@ main().catch((error) => {
   p.cancel(error instanceof Error ? error.message : "Unknown error occurred");
   process.exit(1);
 });
-
