@@ -49,7 +49,7 @@ export async function interpretNaturalLanguage(
 
   try {
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
       messages: [
@@ -62,6 +62,9 @@ export async function interpretNaturalLanguage(
 
     // Extract JSON from response
     const content = message.content[0];
+    if (!content) {
+      throw new Error("Empty response from Claude API");
+    }
     if (content.type !== "text") {
       throw new Error("Unexpected response type from Claude API");
     }
@@ -82,8 +85,8 @@ export async function interpretNaturalLanguage(
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw new Error(
-        `Invalid configuration from Claude: ${error.errors
-          .map((e) => e.message)
+        `Invalid configuration from Claude: ${error.issues
+          .map((e: z.ZodIssue) => e.message)
           .join(", ")}`
       );
     }

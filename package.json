@@ -1,22 +1,46 @@
 {
-  "name": "Forge",
-  "version": "1.0.0",
-  "description": "",
+  "name": "create-forge",
+  "version": "0.1.0",
+  "description": "A CLI tool that uses Claude to generate a project with the bare bones of either frontend, backend or fullstack. This is for developers and by developers.",
   "type": "module",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "bin": {
-    "forge": "./packages/cli/src/index.ts"
+    "forge": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "start": "tsx src/index.ts",
-    "build": "tsc",
+    "start": "tsx packages/cli/src/index.ts",
+    "build": "tsup",
+    "prepublishOnly": "pnpm build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "cli",
+    "scaffolding",
+    "project-generator",
+    "frontend",
+    "backend",
+    "fullstack",
+    "claude",
+    "ai"
+  ],
   "author": "jjarrett21",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jjarrett21/forge"
+  },
+  "bugs": {
+    "url": "https://github.com/jjarrett21/forge/issues"
+  },
+  "homepage": "https://github.com/jjarrett21/forge#readme",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
     "@clack/prompts": "^0.8.2",
     "execa": "^9.6.0",
     "fs-extra": "^11.3.2",
@@ -29,6 +53,7 @@
     "@types/node": "^24.10.0",
     "@types/prompts": "^2.4.9",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.0",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3"
   }
