@@ -40,7 +40,6 @@
   "homepage": "https://github.com/jjarrett21/forge#readme",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
     "@clack/prompts": "^0.8.2",
     "execa": "^9.6.0",
     "fs-extra": "^11.3.2",

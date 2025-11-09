@@ -37,9 +37,9 @@ Follow the interactive prompts to choose:
 - Project type (Frontend, Backend, or Full Stack)
 - Configuration options
 
-### Natural Language Mode
+### Natural Language Mode (AI-Powered)
 
-Describe your project in plain English:
+Describe your project in plain English and let AI interpret it:
 
 ```bash
 forge --from-prompt
@@ -49,6 +49,8 @@ Example prompts:
 - "I want a web app with React UI, FastAPI backend, and Postgres. Use Docker."
 - "Create a frontend project with React and Tailwind"
 - "Build a full-stack app with authentication"
+
+**Note:** This feature includes 10 free AI interpretations per day. No API key required!
 
 ## Project Types
 
@@ -127,20 +129,6 @@ Forge/
 - Node.js 18 or higher
 - npm or pnpm
 - Docker (for backend/fullstack projects)
-- **Anthropic API Key** (only for `--from-prompt` natural language mode)
-
-### Setting up API Key for Natural Language Mode
-
-The `--from-prompt` feature uses Claude (Haiku) to interpret your project descriptions. To use this feature:
-
-1. Get an API key from https://console.anthropic.com/
-2. Set the environment variable:
-
-```bash
-export ANTHROPIC_API_KEY=your-api-key-here
-```
-
-Or create a `.env` file in your project root (see `.env.example`)
 
 ## License
 
