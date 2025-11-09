@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    // Module System
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    
+    // Type Definitions
+    "types": ["node"],
+    
+    // Output Settings
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    
+    // Strict Type Checking
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    
+    // Module & Import Settings
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    
+    // JSX (for blueprints that might use React)
+    "jsx": "react-jsx",
+    
+    // Performance
+    "skipLibCheck": true,
+    
+    // Additional Checks (commented out, enable as needed)
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "blueprints/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "output"
+  ]
+}
