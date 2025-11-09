@@ -13,13 +13,13 @@ A CLI tool that uses Claude to generate a project with the bare bones of either 
 ## Installation
 
 ```bash
-npm install -g create-forge
+npm install -g forge-fire
 ```
 
 Or use with npx (no installation required):
 
 ```bash
-npx create-forge my-app
+npx forge-fire my-app
 ```
 
 ## Usage
@@ -78,7 +78,7 @@ Example prompts:
 
 ```bash
 # Install globally
-npm install -g create-forge
+npm install -g forge-fire
 
 # Create a new project
 forge my-awesome-app

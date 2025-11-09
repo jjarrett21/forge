@@ -1,5 +1,5 @@
 {
-  "name": "create-forge",
+  "name": "forge-fire",
   "version": "0.1.0",
   "description": "A CLI tool that uses Claude to generate a project with the bare bones of either frontend, backend or fullstack. This is for developers and by developers.",
   "type": "module",
