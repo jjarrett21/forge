@@ -1,0 +1,14 @@
+{
+  "name": "@forge/cli",
+  "version": "1.0.0",
+  "type": "module",
+  "bin": {
+    "forge": "./bin/forge.js"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.8.2",
+    "@forge/core": "workspace:*",
+    "tsx": "^4.19.2"
+  }
+}
+
