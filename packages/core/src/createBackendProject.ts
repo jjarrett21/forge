@@ -1,20 +1,58 @@
 import fs from "fs-extra";
 import path from "path";
+import { composeBlueprints } from "../../../src/compose.js";
+import type { ProjectConfig } from "./interpretNaturalLanguage.js";
 
 /**
- * Creates a backend project with FastAPI, PostgreSQL, and Docker Compose
+ * Creates a backend project based on the backend type
  * @param projectPath - Path to the project directory (where backend/ will be created)
+ * @param backendType - Type of backend to create
  * @param cwd - Current working directory (defaults to process.cwd())
  */
 export async function createBackendProject(
   projectPath: string,
+  backendType: ProjectConfig["backend"],
   cwd: string = process.cwd()
 ): Promise<void> {
   const backendDir = path.join(cwd, projectPath, "backend");
+  await fs.ensureDir(backendDir);
+
+  // Map backend types to blueprint imports
+  const blueprintMap: Record<string, () => Promise<{ blueprint: any }>> = {
+    fastapi: () => import("../../../blueprints/fastapi/index.js"),
+    express: () => import("../../../blueprints/express/index.js"),
+    "typescript-prisma": () => import("../../../blueprints/typescript-prisma/index.js"),
+    golang: () => import("../../../blueprints/golang/index.js"),
+    rust: () => import("../../../blueprints/rust/index.js"),
+    java: () => import("../../../blueprints/java/index.js"),
+  };
+
+  // For FastAPI, use the old direct file creation method for backward compatibility
+  if (backendType === "fastapi") {
+    await createFastAPIProject(backendDir);
+    return;
+  }
+
+  // For other backends, use blueprints
+  const blueprintImport = blueprintMap[backendType];
+  if (!blueprintImport) {
+    throw new Error(`Unsupported backend type: ${backendType}`);
+  }
+
+  const { blueprint } = await blueprintImport();
+  await composeBlueprints(backendDir, [blueprint]);
+}
+
+/**
+ * Creates a FastAPI backend project (legacy method)
+ * @param backendDir - Directory where backend will be created
+ */
+async function createFastAPIProject(backendDir: string): Promise<void> {
   const appDir = path.join(backendDir, "app");
   const apiDir = path.join(appDir, "api");
   const coreDir = path.join(appDir, "core");
   const testsDir = path.join(backendDir, "tests");
+  const projectRoot = path.dirname(backendDir);
 
   // Create directory structure
   await fs.ensureDir(apiDir);
@@ -72,7 +110,7 @@ psycopg[binary]
 
   // Create docker-compose.yml
   await fs.writeFile(
-    path.join(cwd, projectPath, "docker-compose.yml"),
+    path.join(projectRoot, "docker-compose.yml"),
     `version: "3.9"
 
 services:
