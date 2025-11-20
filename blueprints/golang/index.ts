@@ -8,7 +8,7 @@ export const blueprint: Blueprint = {
     "build:api": "cd backend && go build -o bin/server main.go",
   },
   async setup(target: string) {
-    const backendDir = path.join(target, "backend");
+    const backendDir = target;
     await fs.ensureDir(backendDir);
     await fs.ensureDir(path.join(backendDir, "internal"));
     await fs.ensureDir(path.join(backendDir, "internal", "handlers"));
