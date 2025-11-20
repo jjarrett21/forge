@@ -9,7 +9,7 @@ export const blueprint: Blueprint = {
     "start:api": "cd backend && cargo run --release",
   },
   async setup(target: string) {
-    const backendDir = path.join(target, "backend");
+    const backendDir = target;
     await fs.ensureDir(backendDir);
     await fs.ensureDir(path.join(backendDir, "src"));
     await fs.ensureDir(path.join(backendDir, "src", "handlers"));
