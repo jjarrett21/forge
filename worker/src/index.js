@@ -81,11 +81,27 @@ Only respond with valid JSON following this schema:
 
 {
   "projectName": string,
-  "frontend": "react" | "next" | "none",
-  "backend": "fastapi" | "express" | "none",
+  "frontend": "react" | "next" | "svelte" | "sveltekit" | "none",
+  "backend": "fastapi" | "express" | "typescript-prisma" | "golang" | "rust" | "java" | "none",
   "database": "postgres" | "sqlite" | "none",
   "useDocker": boolean
 }
+
+Frontend options:
+- "react": React with Vite (react-vite-kitchen-sink)
+- "next": Next.js 14 with TypeScript and Tailwind CSS
+- "svelte": Svelte with Vite and TypeScript
+- "sveltekit": SvelteKit framework with TypeScript
+- "none": No frontend
+
+Backend options:
+- "fastapi": Python FastAPI with PostgreSQL
+- "express": Express.js with TypeScript
+- "typescript-prisma": Express.js with TypeScript and Prisma ORM
+- "golang": Go with Gorilla Mux and PostgreSQL
+- "rust": Rust with Actix Web and PostgreSQL
+- "java": Java Spring Boot with Spring Data JPA
+- "none": No backend
 
 If something is unclear, make a reasonable assumption.
 

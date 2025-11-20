@@ -2,8 +2,16 @@ import { z } from "zod";
 
 const ProjectConfigSchema = z.object({
   projectName: z.string(),
-  frontend: z.enum(["react", "next", "none"]),
-  backend: z.enum(["fastapi", "express", "none"]),
+  frontend: z.enum(["react", "next", "svelte", "sveltekit", "none"]),
+  backend: z.enum([
+    "fastapi",
+    "express",
+    "typescript-prisma",
+    "golang",
+    "rust",
+    "java",
+    "none",
+  ]),
   database: z.enum(["postgres", "sqlite", "none"]),
   useDocker: z.boolean(),
 });
@@ -33,7 +41,9 @@ export async function interpretNaturalLanguage(
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
+      const error = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
       if (response.status === 429) {
         throw new Error(
           "Rate limit exceeded. You've reached the maximum of 10 AI interpretations per day. Please try again tomorrow or use the interactive mode."
@@ -44,7 +54,9 @@ export async function interpretNaturalLanguage(
       );
     }
 
-    const data = await response.json();
+    const data = (await response.json()) as {
+      content?: Array<{ type: string; text: string }>;
+    };
 
     // Extract JSON from Anthropic response
     const content = data.content?.[0];

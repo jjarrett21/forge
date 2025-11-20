@@ -18,13 +18,13 @@ export async function createProject(
   // Determine project type based on config
   if (frontend !== "none" && backend !== "none") {
     // Full stack project
-    await createFullStackProject(projectName, cwd);
+    await createFullStackProject(projectName, frontend, backend, cwd);
   } else if (frontend !== "none") {
     // Frontend only
-    await createFrontendProject(projectName, cwd);
+    await createFrontendProject(projectName, frontend, cwd);
   } else if (backend !== "none") {
     // Backend only
-    await createBackendProject(projectName, cwd);
+    await createBackendProject(projectName, backend, cwd);
   } else {
     throw new Error("At least one of frontend or backend must be specified");
   }
