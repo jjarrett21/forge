@@ -48,7 +48,6 @@ export const blueprint: Blueprint = {
       // Move the generated directory to our target
       if (await fs.pathExists(tempPath)) {
         // Verify it's SvelteKit by checking for svelte.config.js
-        const svelteConfigPath = path.join(tempPath, "svelte.config.js");
         const packageJsonPath = path.join(tempPath, "package.json");
         
         if (await fs.pathExists(packageJsonPath)) {
