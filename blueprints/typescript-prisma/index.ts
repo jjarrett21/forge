@@ -1,6 +1,5 @@
 import fs from "fs-extra";
 import path from "path";
-import { execa } from "execa";
 import type { Blueprint } from "../../src/compose.js";
 
 export const blueprint: Blueprint = {
