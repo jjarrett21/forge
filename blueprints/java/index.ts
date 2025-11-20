@@ -9,7 +9,7 @@ export const blueprint: Blueprint = {
     "start:api": "cd backend && java -jar target/*.jar",
   },
   async setup(target: string) {
-    const backendDir = path.join(target, "backend");
+    const backendDir = target;
     await fs.ensureDir(backendDir);
     await fs.ensureDir(path.join(backendDir, "src", "main", "java", "com", "example", "backend"));
     await fs.ensureDir(path.join(backendDir, "src", "main", "java", "com", "example", "backend", "controller"));
